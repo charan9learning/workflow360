@@ -1,0 +1,6 @@
+@WorkFlow360_HostAddress = http://localhost:5289
+
+GET {{WorkFlow360_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
