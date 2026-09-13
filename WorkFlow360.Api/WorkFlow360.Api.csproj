@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\WorkFlow360.Application\WorkFlow360.Application.csproj" />
     <ProjectReference Include="..\WorkFlow360.Infrastructure\WorkFlow360.Infrastructure.csproj" />
   </ItemGroup>

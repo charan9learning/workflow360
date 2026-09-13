@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WorkFlow360.Application.Common.Interface;
 using WorkFlow360.Domain.Entities;
 
 namespace WorkFlow360.Infrastructure.Persistence
 {
-    public sealed class ApplicationDbContext : DbContext
+    public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
