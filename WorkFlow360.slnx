@@ -1,6 +1,6 @@
 <Solution>
+  <Project Path="WorkFlow360.Api/WorkFlow360.Api.csproj" />
   <Project Path="WorkFlow360.Application/WorkFlow360.Application.csproj" />
   <Project Path="WorkFlow360.Domain/WorkFlow360.Domain.csproj" />
   <Project Path="WorkFlow360.Infrastructure/WorkFlow360.Infrastructure.csproj" />
-  <Project Path="WorkFlow360/WorkFlow360.Api.csproj" />
 </Solution>
