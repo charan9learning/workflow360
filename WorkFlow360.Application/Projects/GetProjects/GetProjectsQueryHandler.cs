@@ -1,4 +1,5 @@
-﻿using WorkFlow360.Application.Common.Interface;
+﻿using Microsoft.EntityFrameworkCore;
+using WorkFlow360.Application.Common.Interface;
 
 namespace WorkFlow360.Application.Projects.GetProjects
 {
