@@ -79,16 +79,27 @@ namespace WorkFlow360.Api.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll(
-        CancellationToken cancellationToken)
+                 [FromQuery] GetProjectsRequest request,
+                    CancellationToken cancellationToken)
         {
-            var query = new GetProjectsQuery();
+            var query = new GetProjectsQuery(
+                request.Search,
+                request.Page,
+                request.PageSize,
+                request.SortBy,
+                request.SortDirection);
 
-            var response =
+            var result =
                 await _getAllHandler.HandleAsync(
                     query,
                     cancellationToken);
 
-            return Ok(response);
+            if (result.IsFailure)
+            {
+                return Problem(result.Error);
+            }
+
+            return Ok(result.Value);
         }
 
         [HttpPut("{id:guid}")]
