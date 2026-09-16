@@ -32,7 +32,7 @@ namespace WorkFlow360.Application.Projects.GetProjectById
             if (project is null)
             {
                 return Result<ProjectResponse>.Failure(
-                    new Error(
+                     Error.NotFound(
                         "Project.NotFound",
                         "Project was not found."));
             }

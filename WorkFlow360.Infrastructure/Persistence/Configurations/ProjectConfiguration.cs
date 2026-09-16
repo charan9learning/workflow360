@@ -20,7 +20,8 @@ namespace WorkFlow360.Infrastructure.Persistence.Configurations
             builder.Property(x => x.Description)
                 .HasMaxLength(1000);
 
-            builder.HasIndex(x => x.Name);
+            builder.HasIndex(x => x.Name)
+                .IsUnique();
         }
     }
 }

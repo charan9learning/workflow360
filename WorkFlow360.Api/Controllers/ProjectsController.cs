@@ -10,7 +10,7 @@ namespace WorkFlow360.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class ProjectsController : ControllerBase
+    public sealed class ProjectsController : ApiController
     {
         private readonly CreateProjectCommandHandler _createHandler;
         private readonly GetProjectByIdQueryHandler _getByIdHandler;
@@ -33,22 +33,28 @@ namespace WorkFlow360.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreateProjectResponse>> Create(
-            CreateProjectRequest request,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(
+      CreateProjectRequest request,
+      CancellationToken cancellationToken)
         {
             var command = new CreateProjectCommand(
                 request.Name,
                 request.Description);
 
-            var response = await _createHandler.HandleAsync(
-                command,
-                cancellationToken);
+            var result =
+                await _createHandler.HandleAsync(
+                    command,
+                    cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return Problem(result.Error);
+            }
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = response.Id },
-                response);
+                new { id = result.Value.Id },
+                result.Value);
         }
 
         [HttpGet("{id:guid}")]
@@ -65,11 +71,7 @@ namespace WorkFlow360.Api.Controllers
 
             if (result.IsFailure)
             {
-                return NotFound(new
-                {
-                    result.Error.Code,
-                    result.Error.Message
-                });
+                return Problem(result.Error);
             }
 
             return Ok(result.Value);
@@ -107,11 +109,7 @@ namespace WorkFlow360.Api.Controllers
 
             if (result.IsFailure)
             {
-                return NotFound(new
-                {
-                    result.Error.Code,
-                    result.Error.Message
-                });
+                return Problem(result.Error);
             }
 
             return NoContent();
@@ -133,11 +131,7 @@ namespace WorkFlow360.Api.Controllers
 
             if (result.IsFailure)
             {
-                return NotFound(new
-                {
-                    result.Error.Code,
-                    result.Error.Message
-                });
+                return Problem(result.Error);
             }
 
             return NoContent();

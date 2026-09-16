@@ -26,7 +26,7 @@ namespace WorkFlow360.Application.Projects.DeleteProject
             if (project is null)
             {
                 return Result.Failure(
-                    new Error(
+                    Error.NotFound(
                         "Project.NotFound",
                         "Project was not found."));
             }

@@ -1,4 +1,7 @@
-﻿using WorkFlow360.Application.Common.Interface;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using WorkFlow360.Application.Common.Interface;
+using WorkFlow360.Application.Common.Results;
 using WorkFlow360.Domain.Entities;
 
 namespace WorkFlow360.Application.Projects.CreateProject
@@ -6,17 +9,43 @@ namespace WorkFlow360.Application.Projects.CreateProject
     public sealed class CreateProjectCommandHandler
     {
         private readonly IApplicationDbContext _dbContext;
+        private readonly IValidator<CreateProjectCommand> _validator;
 
         public CreateProjectCommandHandler(
-            IApplicationDbContext dbContext)
+            IApplicationDbContext dbContext,
+            IValidator<CreateProjectCommand> validator)
         {
             _dbContext = dbContext;
+            _validator = validator;
         }
 
-        public async Task<CreateProjectResponse> HandleAsync(
+        public async Task<Result<CreateProjectResponse>> HandleAsync(
             CreateProjectCommand command,
             CancellationToken cancellationToken)
         {
+            var projectExists =
+                 await _dbContext.Projects
+                                    .AnyAsync(
+                                        x => x.Name == command.Name,
+                                        cancellationToken);
+
+            if (projectExists)
+            {
+                return Result<CreateProjectResponse>.Failure(
+                    Error.Conflict(
+                        "Project.DuplicateName",
+                        "A project with this name already exists."));
+            }
+
+            var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+
+            if (!validationResult.IsValid)
+            {
+                var errorMessage = string.Join("; ",validationResult.Errors.Select(x => x.ErrorMessage));
+
+                return Result<CreateProjectResponse>.Failure(Error.Validation(errorMessage));
+            }
+
             var project = Project.Create(
                 command.Name,
                 command.Description);
@@ -26,11 +55,14 @@ namespace WorkFlow360.Application.Projects.CreateProject
             await _dbContext.SaveChangesAsync(
                 cancellationToken);
 
-            return new CreateProjectResponse(
+            var response = new CreateProjectResponse(
                 project.Id,
                 project.Name,
                 project.Description,
                 project.CreatedAtUtc);
+
+            return Result<CreateProjectResponse>.Success(response);
+
         }
     }
 }

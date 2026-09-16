@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using WorkFlow360.Application.Projects.CreateProject;
 using WorkFlow360.Application.Projects.DeleteProject;
 using WorkFlow360.Application.Projects.GetProjectById;
@@ -12,6 +13,8 @@ namespace WorkFlow360.Application
         public static IServiceCollection AddApplication(
             this IServiceCollection services)
         {
+            services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
             services.AddScoped<CreateProjectCommandHandler>();
             services.AddScoped<GetProjectsQueryHandler>();
             services.AddScoped<UpdateProjectCommandHandler>();
