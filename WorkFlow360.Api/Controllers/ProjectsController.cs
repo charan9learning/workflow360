@@ -21,41 +21,26 @@ namespace WorkFlow360.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(
-      CreateProjectRequest request,
-      CancellationToken cancellationToken)
+        public async Task<IActionResult> Create( CreateProjectRequest request, CancellationToken cancellationToken)
         {
-            var command = new CreateProjectCommand(
-                request.Name,
-                request.Description);
+            var command = new CreateProjectCommand( request.Name, request.Description);
 
-            var result =
-                await _sender.Send(
-                    command,
-                    cancellationToken);
+            var result = await _sender.Send( command, cancellationToken);
 
             if (result.IsFailure)
             {
                 return Problem(result.Error);
             }
-
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = result.Value.Id },
-                result.Value);
+            
+            return CreatedAtAction( nameof(GetById), new { id = result.Value.Id }, result.Value);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(
-        Guid id,
-        CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById( Guid id, CancellationToken cancellationToken)
         {
             var query = new GetProjectByIdQuery(id);
 
-            var result =
-                await _sender.Send(
-                    query,
-                    cancellationToken);
+            var result = await _sender.Send( query, cancellationToken);
 
             if (result.IsFailure)
             {
@@ -66,9 +51,7 @@ namespace WorkFlow360.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(
-                 [FromQuery] GetProjectsRequest request,
-                    CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAll( [FromQuery] GetProjectsRequest request, CancellationToken cancellationToken)
         {
             var query = new GetProjectsQuery(
                 request.Search,
@@ -77,10 +60,7 @@ namespace WorkFlow360.Api.Controllers
                 request.SortBy,
                 request.SortDirection);
 
-            var result =
-                await _sender.Send(
-                    query,
-                    cancellationToken);
+            var result = await _sender.Send( query, cancellationToken);
 
             if (result.IsFailure)
             {
@@ -91,20 +71,11 @@ namespace WorkFlow360.Api.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(
-            Guid id,
-            UpdateProjectRequest request,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> Update( Guid id, UpdateProjectRequest request, CancellationToken cancellationToken)
         {
-            var command = new UpdateProjectCommand(
-                id,
-                request.Name,
-                request.Description);
+            var command = new UpdateProjectCommand( id, request.Name, request.Description);
 
-            var result =
-                await _sender.Send(
-                    command,
-                    cancellationToken);
+            var result = await _sender.Send( command, cancellationToken);
 
             if (result.IsFailure)
             {
@@ -116,17 +87,11 @@ namespace WorkFlow360.Api.Controllers
 
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(
-            Guid id,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete( Guid id, CancellationToken cancellationToken)
         {
-            var command =
-                new DeleteProjectCommand(id);
+            var command = new DeleteProjectCommand(id);
 
-            var result =
-                await _sender.Send(
-                    command,
-                    cancellationToken);
+            var result = await _sender.Send( command, cancellationToken);
 
             if (result.IsFailure)
             {

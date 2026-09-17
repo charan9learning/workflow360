@@ -2,8 +2,7 @@
 
 namespace WorkFlow360.Application.Projects.UpdateProject
 {
-    public sealed class UpdateProjectCommandValidator
-      : AbstractValidator<UpdateProjectCommand>
+    public sealed class UpdateProjectCommandValidator : AbstractValidator<UpdateProjectCommand>
     {
         public UpdateProjectCommandValidator()
         {

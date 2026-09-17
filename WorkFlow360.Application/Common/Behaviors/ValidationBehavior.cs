@@ -4,23 +4,17 @@ using WorkFlow360.Application.Common.Results;
 
 namespace WorkFlow360.Application.Common.Behaviors
 {
-    public sealed class ValidationBehavior<TRequest, TResponse>
-        : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : notnull
+    public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
     {
         private readonly IEnumerable<IValidator<TRequest>>
             _validators;
 
-        public ValidationBehavior(
-            IEnumerable<IValidator<TRequest>> validators)
+        public ValidationBehavior( IEnumerable<IValidator<TRequest>> validators)
         {
             _validators = validators;
         }
 
-        public async Task<TResponse> Handle(
-            TRequest request,
-            RequestHandlerDelegate<TResponse> next,
-            CancellationToken cancellationToken)
+        public async Task<TResponse> Handle( TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             if (!_validators.Any())
             {
@@ -30,36 +24,18 @@ namespace WorkFlow360.Application.Common.Behaviors
             var context =
                 new ValidationContext<TRequest>(request);
 
-            var validationResults =
-                await Task.WhenAll(
-                    _validators.Select(
-                        validator =>
-                            validator.ValidateAsync(
-                                context,
-                                cancellationToken)));
-
-            var failures =
-                validationResults
-                    .SelectMany(result => result.Errors)
-                    .Where(failure => failure is not null)
-                    .ToList();
+            var validationResults = await Task.WhenAll( _validators.Select( validator => validator.ValidateAsync( context, cancellationToken)));
+            
+            var failures = validationResults .SelectMany(result => result.Errors) .Where(failure => failure is not null) .ToList();
 
             if (failures.Count == 0)
             {
                 return await next();
             }
+            var message = string.Join( "; ", failures.Select( failure => failure.ErrorMessage));
+            var error = Error.Validation(message);
 
-            var message =
-                string.Join(
-                    "; ",
-                    failures.Select(
-                        failure => failure.ErrorMessage));
-
-            var error =
-                Error.Validation(message);
-
-            return CreateFailureResponse<TResponse>(
-                error);
+            return CreateFailureResponse<TResponse>( error);
         }
 
         private static TResponse CreateFailureResponse<T>(
@@ -69,25 +45,18 @@ namespace WorkFlow360.Application.Common.Behaviors
 
             if (responseType == typeof(Result))
             {
-                return (TResponse)(object)
-                    Result.Failure(error);
+                return (TResponse)(object) 
+                        Result.Failure(error);
             }
 
-            if (responseType.IsGenericType &&
-                responseType.GetGenericTypeDefinition()
-                    == typeof(Result<>))
+            if (responseType.IsGenericType && responseType.GetGenericTypeDefinition() == typeof(Result<>))
             {
-                var failureMethod =
-                    responseType.GetMethod(
-                        nameof(Result<object>.Failure));
+                var failureMethod = responseType.GetMethod( nameof(Result<object>.Failure));
 
-                return (TResponse)failureMethod!
-                    .Invoke(null, [error])!;
+                return (TResponse)failureMethod! .Invoke(null, [error])!;
             }
 
-            throw new InvalidOperationException(
-                $"ValidationBehavior cannot create " +
-                $"a failure response for {responseType.Name}.");
+            throw new InvalidOperationException( $"ValidationBehavior cannot create " + $"a failure response for {responseType.Name}.");
         }
     }
 }

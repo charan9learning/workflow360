@@ -7,8 +7,7 @@ namespace WorkFlow360.Application.Common.Messaging
     {
     }
 
-    public interface ICommand<TResponse>
-        : IRequest<Result<TResponse>>
+    public interface ICommand<TResponse> : IRequest<Result<TResponse>>
     {
     }
 }

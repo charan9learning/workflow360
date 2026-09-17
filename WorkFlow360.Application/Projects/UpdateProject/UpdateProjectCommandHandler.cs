@@ -8,8 +8,7 @@ namespace WorkFlow360.Application.Projects.UpdateProject
     public sealed class UpdateProjectCommandHandler : ICommandHandler<UpdateProjectCommand>
     {
         private readonly IApplicationDbContext _dbContext;
-        public UpdateProjectCommandHandler(
-            IApplicationDbContext dbContext)
+        public UpdateProjectCommandHandler( IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -17,26 +16,17 @@ namespace WorkFlow360.Application.Projects.UpdateProject
         public async Task<Result> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
 
-            var project = await _dbContext.Projects
-          .FirstOrDefaultAsync(
-              x => x.Id == request.Id,
-              cancellationToken);
+            var project = await _dbContext.Projects .FirstOrDefaultAsync( x => x.Id == request.Id, cancellationToken);
 
 
             if (project is null)
             {
-                return Result.Failure(
-                    Error.NotFound(
-                        "Project.NotFound",
-                        "Project was not found."));
+                return Result.Failure( Error.NotFound( "Project.NotFound", "Project was not found."));
             }
 
-            project.Update(
-                request.Name,
-                request.Description);
+            project.Update( request.Name, request.Description);
 
-            await _dbContext.SaveChangesAsync(
-                cancellationToken);
+            await _dbContext.SaveChangesAsync( cancellationToken);
 
             return Result.Success();
         }

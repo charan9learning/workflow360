@@ -7,7 +7,6 @@ namespace WorkFlow360.Application.Common.Interface
     {
         DbSet<Project> Projects { get; }
 
-        Task<int> SaveChangesAsync(
-            CancellationToken cancellationToken = default);
+        Task<int> SaveChangesAsync( CancellationToken cancellationToken = default);
     }
 }

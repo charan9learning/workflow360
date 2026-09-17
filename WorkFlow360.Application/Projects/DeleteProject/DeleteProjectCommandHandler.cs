@@ -9,31 +9,22 @@ namespace WorkFlow360.Application.Projects.DeleteProject
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public DeleteProjectCommandHandler(
-            IApplicationDbContext dbContext)
+        public DeleteProjectCommandHandler( IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         public async Task<Result> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
         {
-            var project = await _dbContext.Projects
-                               .FirstOrDefaultAsync(
-                                  x => x.Id == request.Id,
-                                         cancellationToken);
+            var project = await _dbContext.Projects .FirstOrDefaultAsync( x => x.Id == request.Id, cancellationToken);
 
             if (project is null)
             {
-                return Result.Failure(
-                    Error.NotFound(
-                        "Project.NotFound",
-                        "Project was not found."));
+                return Result.Failure( Error.NotFound( "Project.NotFound", "Project was not found."));
             }
 
             _dbContext.Projects.Remove(project);
-
-            await _dbContext.SaveChangesAsync(
-                cancellationToken);
+            await _dbContext.SaveChangesAsync( cancellationToken);
 
             return Result.Success();
         }

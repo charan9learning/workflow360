@@ -2,8 +2,7 @@
 
 namespace WorkFlow360.Application.Projects.GetProjects
 {
-    public sealed class GetProjectsQueryValidator
-      : AbstractValidator<GetProjectsQuery>
+    public sealed class GetProjectsQueryValidator : AbstractValidator<GetProjectsQuery>
     {
         private static readonly string[] AllowedSortColumns =
         [

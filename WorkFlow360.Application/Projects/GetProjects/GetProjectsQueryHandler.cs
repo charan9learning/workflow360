@@ -8,25 +8,17 @@ using WorkFlow360.Domain.Entities;
 
 namespace WorkFlow360.Application.Projects.GetProjects
 {
-    public sealed class GetProjectsQueryHandler : IQueryHandler<
-        GetProjectsQuery,
-        PagedResult<ProjectListItemResponse>>
+    public sealed class GetProjectsQueryHandler : IQueryHandler< GetProjectsQuery, PagedResult<ProjectListItemResponse>>
     {
         private readonly IApplicationDbContext _dbContext;
-        public GetProjectsQueryHandler(
-            IApplicationDbContext dbContext,
-            IValidator<GetProjectsQuery> validator)
+        public GetProjectsQueryHandler( IApplicationDbContext dbContext, IValidator<GetProjectsQuery> validator)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<Result<PagedResult<ProjectListItemResponse>>> Handle(
-            GetProjectsQuery request,
-            CancellationToken cancellationToken)
+        public async Task<Result<PagedResult<ProjectListItemResponse>>> Handle( GetProjectsQuery request, CancellationToken cancellationToken)
         {
-            IQueryable<Project> query =
-                _dbContext.Projects
-                    .AsNoTracking();
+            IQueryable<Project> query = _dbContext.Projects .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
@@ -42,13 +34,9 @@ namespace WorkFlow360.Application.Projects.GetProjects
                          $"%{search}%")));
             }
 
-            query = ApplySorting(
-                query,
-                request.SortBy,
-                request.SortDirection);
+            query = ApplySorting( query, request.SortBy, request.SortDirection);
 
-            var totalCount =
-                await query.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
             var projects =
                 await query
@@ -74,10 +62,7 @@ namespace WorkFlow360.Application.Projects.GetProjects
                 .Success(response);
         }
 
-        private static IQueryable<Project> ApplySorting(
-            IQueryable<Project> query,
-            string sortBy,
-            string sortDirection)
+        private static IQueryable<Project> ApplySorting( IQueryable<Project> query, string sortBy, string sortDirection)
         {
             var descending =
                 sortDirection.Equals(

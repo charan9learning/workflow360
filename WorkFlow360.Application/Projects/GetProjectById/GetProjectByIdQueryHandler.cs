@@ -5,21 +5,16 @@ using WorkFlow360.Application.Common.Results;
 
 namespace WorkFlow360.Application.Projects.GetProjectById
 {
-    public sealed class GetProjectByIdQueryHandler: IQueryHandler<
-        GetProjectByIdQuery,
-        ProjectResponse>
+    public sealed class GetProjectByIdQueryHandler: IQueryHandler< GetProjectByIdQuery, ProjectResponse>
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public GetProjectByIdQueryHandler(
-            IApplicationDbContext dbContext)
+        public GetProjectByIdQueryHandler( IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<Result<ProjectResponse>> Handle(
-            GetProjectByIdQuery query,
-            CancellationToken cancellationToken)
+        public async Task<Result<ProjectResponse>> Handle( GetProjectByIdQuery query, CancellationToken cancellationToken)
         {
             var project = await _dbContext.Projects
                 .AsNoTracking()
@@ -34,10 +29,7 @@ namespace WorkFlow360.Application.Projects.GetProjectById
 
             if (project is null)
             {
-                return Result<ProjectResponse>.Failure(
-                     Error.NotFound(
-                        "Project.NotFound",
-                        "Project was not found."));
+                return Result<ProjectResponse>.Failure( Error.NotFound( "Project.NotFound", "Project was not found."));
             }
 
             return Result<ProjectResponse>.Success(project);

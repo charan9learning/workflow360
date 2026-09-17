@@ -2,8 +2,7 @@
 
 namespace WorkFlow360.Application.Projects.CreateProject
 {
-    public sealed class CreateProjectCommandValidator
-    : AbstractValidator<CreateProjectCommand>
+    public sealed class CreateProjectCommandValidator : AbstractValidator<CreateProjectCommand>
     {
         public CreateProjectCommandValidator()
         {
