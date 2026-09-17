@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using WorkFlow360.Api.Contracts.Projects;
 using WorkFlow360.Application.Projects.CreateProject;
 using WorkFlow360.Application.Projects.DeleteProject;
@@ -12,24 +13,11 @@ namespace WorkFlow360.Api.Controllers
     [ApiController]
     public sealed class ProjectsController : ApiController
     {
-        private readonly CreateProjectCommandHandler _createHandler;
-        private readonly GetProjectByIdQueryHandler _getByIdHandler;
-        private readonly GetProjectsQueryHandler _getAllHandler;
-        private readonly UpdateProjectCommandHandler _updateHandler;
-        private readonly DeleteProjectCommandHandler _deleteHandler;
+        private readonly ISender _sender;
 
-        public ProjectsController(
-            CreateProjectCommandHandler createHandler,
-            GetProjectByIdQueryHandler getByIdHandler,
-            GetProjectsQueryHandler getAllHandler,
-            UpdateProjectCommandHandler updateHandler,
-            DeleteProjectCommandHandler deleteHandler)
+        public ProjectsController(ISender sender)
         {
-            _createHandler = createHandler;
-            _getByIdHandler = getByIdHandler;
-            _getAllHandler = getAllHandler;
-            _updateHandler = updateHandler;
-            _deleteHandler = deleteHandler;
+            _sender = sender;
         }
 
         [HttpPost]
@@ -42,7 +30,7 @@ namespace WorkFlow360.Api.Controllers
                 request.Description);
 
             var result =
-                await _createHandler.HandleAsync(
+                await _sender.Send(
                     command,
                     cancellationToken);
 
@@ -65,7 +53,7 @@ namespace WorkFlow360.Api.Controllers
             var query = new GetProjectByIdQuery(id);
 
             var result =
-                await _getByIdHandler.HandleAsync(
+                await _sender.Send(
                     query,
                     cancellationToken);
 
@@ -90,7 +78,7 @@ namespace WorkFlow360.Api.Controllers
                 request.SortDirection);
 
             var result =
-                await _getAllHandler.HandleAsync(
+                await _sender.Send(
                     query,
                     cancellationToken);
 
@@ -114,7 +102,7 @@ namespace WorkFlow360.Api.Controllers
                 request.Description);
 
             var result =
-                await _updateHandler.HandleAsync(
+                await _sender.Send(
                     command,
                     cancellationToken);
 
@@ -136,7 +124,7 @@ namespace WorkFlow360.Api.Controllers
                 new DeleteProjectCommand(id);
 
             var result =
-                await _deleteHandler.HandleAsync(
+                await _sender.Send(
                     command,
                     cancellationToken);
 

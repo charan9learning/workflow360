@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkFlow360.Application.Common.Interface;
+using WorkFlow360.Application.Common.Messaging;
 using WorkFlow360.Application.Common.Results;
 
 namespace WorkFlow360.Application.Projects.GetProjectById
 {
-    public sealed class GetProjectByIdQueryHandler
+    public sealed class GetProjectByIdQueryHandler: IQueryHandler<
+        GetProjectByIdQuery,
+        ProjectResponse>
     {
         private readonly IApplicationDbContext _dbContext;
 
@@ -14,7 +17,7 @@ namespace WorkFlow360.Application.Projects.GetProjectById
             _dbContext = dbContext;
         }
 
-        public async Task<Result<ProjectResponse>> HandleAsync(
+        public async Task<Result<ProjectResponse>> Handle(
             GetProjectByIdQuery query,
             CancellationToken cancellationToken)
         {

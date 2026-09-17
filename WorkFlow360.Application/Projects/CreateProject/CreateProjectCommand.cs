@@ -1,6 +1,8 @@
-﻿namespace WorkFlow360.Application.Projects.CreateProject
+﻿using WorkFlow360.Application.Common.Messaging;
+
+namespace WorkFlow360.Application.Projects.CreateProject
 {
     public sealed record CreateProjectCommand(
       string Name,
-      string? Description);
+      string? Description):ICommand<CreateProjectResponse>;
 }

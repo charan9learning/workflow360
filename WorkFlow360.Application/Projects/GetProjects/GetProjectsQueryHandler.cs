@@ -1,46 +1,29 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using WorkFlow360.Application.Common.Interface;
+using WorkFlow360.Application.Common.Messaging;
 using WorkFlow360.Application.Common.Models;
 using WorkFlow360.Application.Common.Results;
 using WorkFlow360.Domain.Entities;
 
 namespace WorkFlow360.Application.Projects.GetProjects
 {
-    public sealed class GetProjectsQueryHandler
+    public sealed class GetProjectsQueryHandler : IQueryHandler<
+        GetProjectsQuery,
+        PagedResult<ProjectListItemResponse>>
     {
         private readonly IApplicationDbContext _dbContext;
-        private readonly IValidator<GetProjectsQuery> _validator;
-
         public GetProjectsQueryHandler(
             IApplicationDbContext dbContext,
             IValidator<GetProjectsQuery> validator)
         {
             _dbContext = dbContext;
-            _validator = validator;
         }
 
-        public async Task<Result<PagedResult<ProjectListItemResponse>>> HandleAsync(
+        public async Task<Result<PagedResult<ProjectListItemResponse>>> Handle(
             GetProjectsQuery request,
             CancellationToken cancellationToken)
         {
-            var validationResult =
-                await _validator.ValidateAsync(
-                    request,
-                    cancellationToken);
-
-            if (!validationResult.IsValid)
-            {
-                var errorMessage = string.Join(
-                    "; ",
-                    validationResult.Errors
-                        .Select(x => x.ErrorMessage));
-
-                return Result<PagedResult<ProjectListItemResponse>>
-                    .Failure(
-                        Error.Validation(errorMessage));
-            }
-
             IQueryable<Project> query =
                 _dbContext.Projects
                     .AsNoTracking();

@@ -1,43 +1,25 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WorkFlow360.Application.Common.Interface;
+using WorkFlow360.Application.Common.Messaging;
 using WorkFlow360.Application.Common.Results;
 
 namespace WorkFlow360.Application.Projects.UpdateProject
 {
-    public sealed class UpdateProjectCommandHandler
+    public sealed class UpdateProjectCommandHandler : ICommandHandler<UpdateProjectCommand>
     {
         private readonly IApplicationDbContext _dbContext;
-        private readonly IValidator<UpdateProjectCommand> _validator;
         public UpdateProjectCommandHandler(
-            IApplicationDbContext dbContext,
-            IValidator<UpdateProjectCommand> validator)
+            IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _validator = validator;
         }
 
-        public async Task<Result> HandleAsync(
-            UpdateProjectCommand command,
-            CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
-
-            var validationResult =await _validator.ValidateAsync(command, cancellationToken);
-
-            if (!validationResult.IsValid)
-            {
-                var errorMessage = string.Join(
-                    "; ",
-                    validationResult.Errors.Select(
-                        x => x.ErrorMessage));
-
-                return Result.Failure(
-                    Error.Validation(errorMessage));
-            }
 
             var project = await _dbContext.Projects
           .FirstOrDefaultAsync(
-              x => x.Id == command.Id,
+              x => x.Id == request.Id,
               cancellationToken);
 
 
@@ -50,8 +32,8 @@ namespace WorkFlow360.Application.Projects.UpdateProject
             }
 
             project.Update(
-                command.Name,
-                command.Description);
+                request.Name,
+                request.Description);
 
             await _dbContext.SaveChangesAsync(
                 cancellationToken);

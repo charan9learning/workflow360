@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkFlow360.Application.Common.Interface;
+using WorkFlow360.Application.Common.Messaging;
 using WorkFlow360.Application.Common.Results;
 
 namespace WorkFlow360.Application.Projects.DeleteProject
 {
-    public sealed class DeleteProjectCommandHandler
+    public sealed class DeleteProjectCommandHandler : ICommandHandler<DeleteProjectCommand>
     {
         private readonly IApplicationDbContext _dbContext;
 
@@ -14,14 +15,12 @@ namespace WorkFlow360.Application.Projects.DeleteProject
             _dbContext = dbContext;
         }
 
-        public async Task<Result> HandleAsync(
-            DeleteProjectCommand command,
-            CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
         {
             var project = await _dbContext.Projects
-                                 .FirstOrDefaultAsync(
-                                    x => x.Id == command.Id,
-                                           cancellationToken);
+                               .FirstOrDefaultAsync(
+                                  x => x.Id == request.Id,
+                                         cancellationToken);
 
             if (project is null)
             {
