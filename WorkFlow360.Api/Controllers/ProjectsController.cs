@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkFlow360.Api.Contracts.Projects;
 using WorkFlow360.Application.Projects.CreateProject;
@@ -9,6 +10,7 @@ using WorkFlow360.Application.Projects.UpdateProject;
 
 namespace WorkFlow360.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public sealed class ProjectsController : ApiController

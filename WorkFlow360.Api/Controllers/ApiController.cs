@@ -17,6 +17,8 @@ namespace WorkFlow360.Api.Controllers
 
                 ErrorType.Conflict => Conflict(CreateProblemDetails( StatusCodes.Status409Conflict, "Conflict", error)),
 
+                ErrorType.Unauthorized => Unauthorized(CreateProblemDetails(StatusCodes.Status401Unauthorized, "Unauthorized", error)),
+
                 _ => StatusCode( StatusCodes.Status500InternalServerError, CreateProblemDetails( StatusCodes.Status500InternalServerError, "Server error", error))
             };
         }
